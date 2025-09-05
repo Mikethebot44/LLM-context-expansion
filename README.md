@@ -79,6 +79,81 @@ console.log(`Token count: ${result.tokenCount} / 200`);
 console.log(`Semantic deduplication removed ${result.droppedChunks.length} similar chunks`);
 ```
 
+### Chat Conversation Optimization
+
+**New in v3.1**: Optimize entire OpenAI-style conversation histories for chatbots and conversational AI.
+
+```typescript
+import { optimizeChatHistory, ChatMessage } from 'double-context';
+
+const conversation: ChatMessage[] = [
+  { role: "system", content: "You are a helpful assistant." },
+  { role: "user", content: "What is the weather like today?" },
+  { role: "assistant", content: "I don't have access to current weather data." },
+  { role: "user", content: "Can you tell me about the weather today?" }, // Similar to previous - will be deduplicated
+  { role: "assistant", content: "I don't have real-time weather information available." }, // Similar - will be deduplicated
+  { role: "user", content: "What time is it?" },
+  { role: "assistant", content: "I don't have access to current time information." }
+];
+
+const optimized = await optimizeChatHistory({
+  messages: conversation,
+  maxTokens: 1000,
+  openaiApiKey: process.env.OPENAI_API_KEY,
+  dedupe: true,
+  strategy: "hybrid",
+  // Chat-specific options
+  preserveSystemMessage: true,        // Always keep system messages
+  preserveLastNMessages: 2,           // Always keep last 2 messages for context
+  semanticThreshold: 0.85             // More aggressive deduplication for conversations
+});
+
+console.log(`Optimized from ${conversation.length} to ${optimized.optimizedMessages.length} messages`);
+console.log(`Token count: ${optimized.tokenCount} / 1000`);
+console.log(`Removed ${optimized.removedMessages.length} redundant messages`);
+
+// Use optimized messages in your OpenAI API call
+const response = await openai.chat.completions.create({
+  model: "gpt-4",
+  messages: optimized.optimizedMessages,  // Optimized conversation history
+  max_tokens: 500
+});
+```
+
+### Chat Utilities
+
+```typescript
+import { 
+  estimateChatTokens, 
+  createConversationSummary,
+  deduplicateUserMessages,
+  prioritizeWithConversationFlow 
+} from 'double-context';
+
+// Estimate tokens for a conversation
+const tokenEstimate = estimateChatTokens(conversation);
+console.log(`Conversation tokens: ~${tokenEstimate}`);
+
+// Create a summary of previous conversation
+const summary = createConversationSummary(conversation);
+console.log(`Summary: ${summary}`);
+
+// Deduplicate only user messages (for repeated questions)
+const dedupedConversation = await deduplicateUserMessages(
+  conversation,
+  embeddingProvider,
+  0.85 // More aggressive threshold for user messages
+);
+
+// Prioritize while maintaining conversation flow
+const prioritized = await prioritizeWithConversationFlow(
+  conversation,
+  "What's the weather?", // Current query
+  embeddingProvider,
+  10 // Keep max 10 messages
+);
+```
+
 ## API Reference
 
 ### `optimizePrompt(options)`
@@ -107,6 +182,44 @@ interface OptimizeResult {
   finalPrompt: string;      // Optimized prompt ready for LLM
   tokenCount: number;       // Final token count
   droppedChunks: string[];  // Context chunks that were removed
+}
+```
+
+### `optimizeChatHistory(options)`
+
+Optimize OpenAI-style conversation histories for chatbots and conversational AI.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `messages` | `ChatMessage[]` | **Required** | - | Array of conversation messages |
+| `maxTokens` | `number` | **Required** | - | Maximum token limit for optimized conversation |
+| `openaiApiKey` | `string` | **Required** | - | Your OpenAI API key for semantic analysis |
+| `dedupe` | `boolean` | Optional | `true` | Enable semantic deduplication of similar messages |
+| `compress` | `boolean` | Optional | `false` | Enable content compression (future feature) |
+| `strategy` | `string` | Optional | `"hybrid"` | Prioritization strategy: `"relevance"`, `"recency"`, or `"hybrid"` |
+| `embedder` | `string` | Optional | `"openai"` | Embedding provider: `"openai"` or `"cohere"` |
+| `embeddingModel` | `string` | Optional | `"text-embedding-3-small"` | OpenAI embedding model to use |
+| `semanticThreshold` | `number` | Optional | `0.9` | Similarity threshold for semantic deduplication (0-1) |
+| `preserveSystemMessage` | `boolean` | Optional | `true` | Always preserve system messages |
+| `preserveLastNMessages` | `number` | Optional | `0` | Number of recent messages to always preserve |
+| `summarizeOlderMessages` | `boolean` | Optional | `false` | Summarize older messages (future feature) |
+
+#### Returns
+
+```typescript
+interface ChatOptimizeResult {
+  optimizedMessages: ChatMessage[];  // Optimized conversation ready for OpenAI API
+  tokenCount: number;                // Final token count
+  removedMessages: ChatMessage[];    // Messages that were removed during optimization
+  compressionSummary?: string;       // Summary of compressed content (if enabled)
+}
+
+interface ChatMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
+  timestamp?: Date;
 }
 ```
 
