@@ -1,5 +1,5 @@
 {
-  "name": "@terragon/double-context",
+  "name": "double-context",
   "version": "1.0.0",
   "description": "Intelligently optimize and compress context for LLM prompts to greatly increase effective context window",
   "main": "dist/index.js",
@@ -26,7 +26,7 @@
     "deduplication",
     "text-processing"
   ],
-  "author": "Terragon Labs",
+  "author": "Michael Jupp",
   "license": "MIT",
   "repository": {
     "type": "git",

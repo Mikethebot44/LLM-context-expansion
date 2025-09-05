@@ -1,14 +1,14 @@
-# @terragon/double-context
+# double-context
 
-🚀 **Intelligently double your LLM's effective context window**
+**Intelligently double your LLM's effective context window**
 
 A TypeScript package that sits between your application and any LLM API to intelligently select, deduplicate, compress, and rerank context chunks so your prompts fit within token limits while retaining maximum useful information.
 
-[![npm version](https://badge.fury.io/js/%40terragon%2Fdouble-context.svg)](https://www.npmjs.com/package/@terragon/double-context)
+[![npm version](https://badge.fury.io/js/double-context.svg)](https://www.npmjs.com/package/double-context)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
-## 🎯 Features
+## Features
 
 - **Token-Aware Optimization** - Respects exact token limits for any LLM
 - **Smart Deduplication** - Removes duplicate and near-duplicate content
@@ -17,18 +17,18 @@ A TypeScript package that sits between your application and any LLM API to intel
 - **TypeScript Native** - Full type safety and IntelliSense support
 - **Framework Agnostic** - Works with OpenAI, Claude, Cohere, or any LLM API
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Installation
 
 ```bash
-npm install @terragon/double-context
+npm install double-context
 ```
 
 ### Basic Usage
 
 ```typescript
-import { optimizePrompt } from '@terragon/double-context';
+import { optimizePrompt } from 'double-context';
 
 const result = await optimizePrompt({
   userPrompt: "Summarize recent Apple earnings.",
@@ -49,7 +49,7 @@ console.log(`Dropped ${result.droppedChunks.length} irrelevant chunks`);
 console.log(result.finalPrompt);
 ```
 
-## 📖 API Reference
+## API Reference
 
 ### `optimizePrompt(options)`
 
@@ -59,13 +59,13 @@ Main function to optimize context for LLM consumption.
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `userPrompt` | `string` | ✅ | - | The main user query/prompt |
-| `context` | `string[]` | ✅ | - | Array of context chunks to optimize |
-| `maxTokens` | `number` | ✅ | - | Maximum token limit for final prompt |
-| `dedupe` | `boolean` | ❌ | `true` | Enable deduplication of similar content |
-| `compress` | `boolean` | ❌ | `false` | Enable content compression (future feature) |
-| `strategy` | `string` | ❌ | `"hybrid"` | Prioritization strategy: `"relevance"`, `"recency"`, or `"hybrid"` |
-| `embedder` | `string` | ❌ | - | Embedding provider for semantic analysis (future feature) |
+| `userPrompt` | `string` | Required | - | The main user query/prompt |
+| `context` | `string[]` | Required | - | Array of context chunks to optimize |
+| `maxTokens` | `number` | Required | - | Maximum token limit for final prompt |
+| `dedupe` | `boolean` | Optional | `true` | Enable deduplication of similar content |
+| `compress` | `boolean` | Optional | `false` | Enable content compression (future feature) |
+| `strategy` | `string` | Optional | `"hybrid"` | Prioritization strategy: `"relevance"`, `"recency"`, or `"hybrid"` |
+| `embedder` | `string` | Optional | - | Embedding provider for semantic analysis (future feature) |
 
 #### Returns
 
@@ -77,7 +77,7 @@ interface OptimizeResult {
 }
 ```
 
-## 🎛️ Prioritization Strategies
+## Prioritization Strategies
 
 ### Relevance (`"relevance"`)
 Prioritizes content based on keyword overlap with the user prompt. Best for Q&A and factual queries.
@@ -85,15 +85,15 @@ Prioritizes content based on keyword overlap with the user prompt. Best for Q&A 
 ### Recency (`"recency"`)
 Prioritizes newer content over older content. Best for time-sensitive information.
 
-### Hybrid (`"hybrid"`) ⭐ **Recommended**
+### Hybrid (`"hybrid"`) **Recommended**
 Combines relevance (70%) and recency (30%) scoring. Provides balanced results for most use cases.
 
-## 🔧 Advanced Usage
+## Advanced Usage
 
 ### Token Counting
 
 ```typescript
-import { countTokens } from '@terragon/double-context';
+import { countTokens } from 'double-context';
 
 const tokens = countTokens("Your text here");
 console.log(`Estimated tokens: ${tokens}`);
@@ -116,7 +116,7 @@ if (result.droppedChunks.length > 0) {
 }
 ```
 
-## 🏗️ How It Works
+## How It Works
 
 The optimization pipeline follows these steps:
 
@@ -125,32 +125,32 @@ The optimization pipeline follows these steps:
 3. **Compression** - Summarizes content when needed (future feature)
 4. **Token-Aware Trimming** - Removes lowest-priority chunks until under limit
 
-## 📊 Performance
+## Performance
 
 - **Deduplication**: ~40% reduction in redundant content
 - **Prioritization**: Maintains 90%+ relevant information
 - **Speed**: <100ms for 1000 context chunks
 - **Memory**: Minimal overhead, no persistent state
 
-## 🗺️ Roadmap
+## Roadmap
 
-### Phase 1 (Current) ✅
-- ✅ Basic token counting and trimming
-- ✅ Text-based deduplication
-- ✅ Keyword-based prioritization
-- ✅ Three prioritization strategies
+### Phase 1 (Current) - Complete
+- Basic token counting and trimming
+- Text-based deduplication
+- Keyword-based prioritization
+- Three prioritization strategies
 
 ### Phase 2 (Coming Soon)
-- 🔄 Semantic deduplication with embeddings
-- 🔄 Advanced relevance scoring with vector similarity
-- 🔄 Multi-embedder support (OpenAI, Cohere)
+- Semantic deduplication with embeddings
+- Advanced relevance scoring with vector similarity
+- Multi-embedder support (OpenAI, Cohere)
 
 ### Phase 3 (Future)
-- 📋 LLM-powered content compression
-- 📋 Smart chunk merging
-- 📋 Usage analytics and optimization telemetry
+- LLM-powered content compression
+- Smart chunk merging
+- Usage analytics and optimization telemetry
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Please see our [contributing guidelines](#contributing-guidelines) below.
 
@@ -206,19 +206,17 @@ npm run dev
 npm run test:coverage
 ```
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 💬 Support
+## Support
 
-- 📋 **Issues**: [GitHub Issues](https://github.com/Mikethebot44/LLM-context-expansion/issues)
-- 📧 **Email**: support@terragonlabs.com
-- 🌐 **Website**: [terragonlabs.com](https://terragonlabs.com)
+- **Issues**: [GitHub Issues](https://github.com/Mikethebot44/LLM-context-expansion/issues)
+- **Author**: Michael Jupp
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
-- Built with ❤️ by [Terragon Labs](https://terragonlabs.com)
 - Inspired by the need for better context management in LLM applications
 - Thanks to the open-source community for TypeScript and Jest
 
@@ -226,8 +224,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-**Made with ❤️ by Terragon Labs**
+**Made with care by Michael Jupp**
 
-[🌟 Star us on GitHub](https://github.com/Mikethebot44/LLM-context-expansion) • [📦 NPM Package](https://www.npmjs.com/package/@terragon/double-context) • [🐛 Report Bug](https://github.com/Mikethebot44/LLM-context-expansion/issues)
+[Star us on GitHub](https://github.com/Mikethebot44/LLM-context-expansion) • [NPM Package](https://www.npmjs.com/package/double-context) • [Report Bug](https://github.com/Mikethebot44/LLM-context-expansion/issues)
 
 </div>
