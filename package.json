@@ -1,6 +1,6 @@
 {
   "name": "double-context",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Intelligently optimize and compress context for LLM prompts to greatly increase effective context window",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -24,7 +24,10 @@
     "token-optimization",
     "context-window",
     "deduplication",
-    "text-processing"
+    "text-processing",
+    "embeddings",
+    "semantic-analysis",
+    "vector-similarity"
   ],
   "author": "Michael Jupp",
   "license": "MIT",
@@ -46,7 +49,9 @@
     "ts-jest": "^29.1.0",
     "typescript": "^5.0.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "openai": "^4.67.0"
+  },
   "files": [
     "dist",
     "README.md",

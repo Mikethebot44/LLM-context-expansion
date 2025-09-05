@@ -3,6 +3,7 @@ import { deduplicate } from "./dedupe";
 import { compress } from "./compressor";
 import { prioritize } from "./prioritizer";
 import { OptimizeOptions, OptimizeResult } from "./types";
+import { createEmbeddingProvider } from "./embeddings";
 
 export async function optimizePrompt(opts: OptimizeOptions): Promise<OptimizeResult> {
   if (!opts.userPrompt) {
@@ -24,13 +25,20 @@ export async function optimizePrompt(opts: OptimizeOptions): Promise<OptimizeRes
   let chunks = [...opts.context];
   const originalChunks = [...chunks];
   
+  // Create embedding provider if API key is provided
+  const embeddingProvider = await createEmbeddingProvider(
+    opts.openaiApiKey,
+    opts.embeddingModel,
+    (opts.embedder as "openai" | "cohere") || "openai"
+  );
+  
   // Step 1: Deduplication
   if (opts.dedupe !== false) { // Default to true
-    chunks = await deduplicate(chunks, opts.embedder);
+    chunks = await deduplicate(chunks, embeddingProvider || undefined, opts.semanticThreshold);
   }
   
   // Step 2: Prioritization (relevance/recency/hybrid)
-  chunks = await prioritize(chunks, opts.userPrompt, opts.strategy || "hybrid", opts.embedder);
+  chunks = await prioritize(chunks, opts.userPrompt, opts.strategy || "hybrid", embeddingProvider || undefined);
   
   // Step 3: Compress if needed and requested
   const promptTokens = countTokens(opts.userPrompt);
