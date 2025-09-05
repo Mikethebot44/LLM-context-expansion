@@ -7,12 +7,38 @@
   "scripts": {
     "build": "tsc",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "dev": "tsc --watch",
-    "prepublishOnly": "npm run build"
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build && npm test"
   },
-  "keywords": ["llm", "context", "optimization", "ai", "prompt"],
+  "keywords": [
+    "llm",
+    "context",
+    "optimization",
+    "ai", 
+    "prompt",
+    "openai",
+    "claude",
+    "gpt",
+    "token-optimization",
+    "context-window",
+    "deduplication",
+    "text-processing"
+  ],
   "author": "Terragon Labs",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mikethebot44/LLM-context-expansion.git"
+  },
+  "homepage": "https://github.com/Mikethebot44/LLM-context-expansion#readme",
+  "bugs": {
+    "url": "https://github.com/Mikethebot44/LLM-context-expansion/issues"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "devDependencies": {
     "@types/jest": "^29.5.0",
     "@types/node": "^20.0.0",
@@ -22,6 +48,8 @@
   },
   "dependencies": {},
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ]
 }
