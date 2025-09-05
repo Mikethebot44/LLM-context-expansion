@@ -1,49 +1,47 @@
 import { optimizePrompt } from "../src/optimizer";
 import { deduplicate } from "../src/dedupe";
 import { prioritize } from "../src/prioritizer";
+import { EmbeddingProvider } from "../src/embeddings";
 
-describe("Semantic Analysis Integration", () => {
-  test("handles missing API key gracefully", async () => {
-    const result = await optimizePrompt({
+describe("Semantic Analysis (OpenAI Required)", () => {
+  const mockApiKey = "sk-fake-api-key-for-testing-1234567890abcdef";
+
+  test("requires OpenAI API key for optimization", async () => {
+    // The openaiApiKey is now required in the type, so this test verifies runtime behavior
+    await expect(optimizePrompt({
       userPrompt: "Test prompt",
       context: ["Context 1", "Context 2"],
-      maxTokens: 100
-      // No openaiApiKey provided
-    });
-
-    expect(result.finalPrompt).toContain("Test prompt");
-    expect(result.tokenCount).toBeGreaterThan(0);
+      maxTokens: 100,
+      openaiApiKey: ""
+    } as any)).rejects.toThrow();
   });
 
-  test("deduplication works without embeddings", async () => {
+  test("deduplication requires embedding provider", async () => {
     const chunks = [
       "Apple earnings increased significantly.",
       "Apple earnings increased significantly.", // Exact duplicate
       "Different content about bananas."
     ];
 
-    const result = await deduplicate(chunks);
-    
-    expect(result).toHaveLength(2);
-    expect(result).not.toContain("Apple earnings increased significantly.".repeat(2));
+    // Should throw error when no embedding provider is provided
+    await expect(deduplicate(chunks, null as any)).rejects.toThrow("Embedding provider is required");
   });
 
-  test("prioritization works without embeddings", async () => {
+  test("prioritization requires embedding provider", async () => {
     const chunks = [
       "Apple is a technology company.",
       "Bananas are yellow fruits.",
       "Apple released new products."
     ];
 
-    const result = await prioritize(chunks, "Tell me about Apple", "relevance");
-    
-    expect(result).toHaveLength(3);
-    // Should prioritize Apple-related content
-    expect(result[0]).toContain("Apple");
+    // Should throw error when no embedding provider is provided
+    await expect(prioritize(chunks, "Tell me about Apple", "relevance", null as any))
+      .rejects.toThrow("Embedding provider is required");
   });
 
-  test("optimization with semantic options but no API key", async () => {
-    const result = await optimizePrompt({
+  test("optimization fails gracefully with invalid API key", async () => {
+    // This will fail when trying to create embedding provider with invalid key
+    await expect(optimizePrompt({
       userPrompt: "Summarize Apple news",
       context: [
         "Apple quarterly earnings rose 15%.",
@@ -54,41 +52,25 @@ describe("Semantic Analysis Integration", () => {
       maxTokens: 100,
       dedupe: true,
       strategy: "relevance",
-      semanticThreshold: 0.9
-      // No openaiApiKey - should fallback to keyword-based
-    });
-
-    expect(result.tokenCount).toBeLessThanOrEqual(100);
-    expect(result.finalPrompt).toContain("Apple");
-    // Should have removed the duplicate
-    const contextPart = result.finalPrompt.split("\n\n")[1] || "";
-    const appleEarningsLines = contextPart.split("\n").filter(line => 
-      line.includes("Apple quarterly earnings rose 15%")
-    );
-    expect(appleEarningsLines).toHaveLength(1);
+      semanticThreshold: 0.9,
+      openaiApiKey: "invalid-key"
+    })).rejects.toThrow();
   });
 
-  test("handles invalid embedder option", async () => {
-    const result = await optimizePrompt({
-      userPrompt: "Test",
-      context: ["Test context"],
-      maxTokens: 100,
-      embedder: "unsupported" as any
+  test("embedding provider configuration", async () => {
+    const provider = new EmbeddingProvider();
+    
+    // Initially not configured
+    await expect(provider.getEmbedding("test")).rejects.toThrow("Embedding provider not configured");
+    
+    // Configure with fake key
+    provider.setConfig({
+      apiKey: mockApiKey,
+      model: "text-embedding-3-small",
+      provider: "openai"
     });
-
-    // Should work fine, falling back to keyword-based processing
-    expect(result.finalPrompt).toContain("Test");
-  });
-
-  test("semantic threshold option is respected", async () => {
-    // Test with very high threshold (should remove fewer duplicates)
-    const chunks = ["Similar content", "Very similar content"];
     
-    const resultHighThreshold = await deduplicate(chunks, undefined, 0.99);
-    expect(resultHighThreshold).toHaveLength(2); // Both kept due to high threshold
-    
-    // Test with low threshold (should remove more duplicates)  
-    const resultLowThreshold = await deduplicate(chunks, undefined, 0.1);
-    expect(resultLowThreshold).toHaveLength(2); // Still both kept since no embeddings
+    // Now configured but will fail with API call (expected)
+    await expect(provider.getEmbedding("test")).rejects.toThrow();
   });
 });
