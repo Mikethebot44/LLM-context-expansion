@@ -1,0 +1,27 @@
+{
+  "name": "@terragon/double-context",
+  "version": "1.0.0",
+  "description": "Intelligently optimize and compress context for LLM prompts to greatly increase effective context window",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": ["llm", "context", "optimization", "ai", "prompt"],
+  "author": "Terragon Labs",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {},
+  "files": [
+    "dist"
+  ]
+}
