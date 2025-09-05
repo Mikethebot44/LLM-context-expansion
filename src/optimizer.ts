@@ -25,20 +25,24 @@ export async function optimizePrompt(opts: OptimizeOptions): Promise<OptimizeRes
   let chunks = [...opts.context];
   const originalChunks = [...chunks];
   
-  // Create embedding provider if API key is provided
+  // Create embedding provider - now required
   const embeddingProvider = await createEmbeddingProvider(
     opts.openaiApiKey,
     opts.embeddingModel,
     (opts.embedder as "openai" | "cohere") || "openai"
   );
   
+  if (!embeddingProvider) {
+    throw new Error("Failed to create embedding provider. Please check your OpenAI API key.");
+  }
+  
   // Step 1: Deduplication
   if (opts.dedupe !== false) { // Default to true
-    chunks = await deduplicate(chunks, embeddingProvider || undefined, opts.semanticThreshold);
+    chunks = await deduplicate(chunks, embeddingProvider, opts.semanticThreshold);
   }
   
   // Step 2: Prioritization (relevance/recency/hybrid)
-  chunks = await prioritize(chunks, opts.userPrompt, opts.strategy || "hybrid", embeddingProvider || undefined);
+  chunks = await prioritize(chunks, opts.userPrompt, opts.strategy || "hybrid", embeddingProvider);
   
   // Step 3: Compress if needed and requested
   const promptTokens = countTokens(opts.userPrompt);

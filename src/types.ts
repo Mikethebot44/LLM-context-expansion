@@ -2,12 +2,12 @@ export interface OptimizeOptions {
   userPrompt: string;
   context: string[];
   maxTokens: number;
+  // OpenAI Configuration (Required)
+  openaiApiKey: string;
   dedupe?: boolean;
   compress?: boolean;
   strategy?: "relevance" | "recency" | "hybrid";
   embedder?: "openai" | "cohere";
-  // OpenAI Configuration
-  openaiApiKey?: string;
   embeddingModel?: string;
   semanticThreshold?: number;
 }

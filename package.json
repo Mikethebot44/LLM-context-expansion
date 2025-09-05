@@ -1,6 +1,6 @@
 {
   "name": "double-context",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Intelligently optimize and compress context for LLM prompts to greatly increase effective context window",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
