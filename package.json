@@ -6,17 +6,22 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
+    "build:mcp": "tsc -p tsconfig.mcp.json",
+    "build:all": "npm run build && npm run build:mcp",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "dev": "tsc --watch",
+    "dev:mcp": "tsc -p tsconfig.mcp.json --watch",
+    "start:mcp": "node mcp-server.mjs",
+    "mcp:dev": "node --loader ts-node/esm mcp/index.ts",
     "clean": "rm -rf dist",
-    "prepublishOnly": "npm run clean && npm run build && npm test"
+    "prepublishOnly": "npm run clean && npm run build:all && npm test"
   },
   "keywords": [
     "llm",
     "context",
     "optimization",
-    "ai", 
+    "ai",
     "prompt",
     "openai",
     "claude",
@@ -27,7 +32,11 @@
     "text-processing",
     "embeddings",
     "semantic-analysis",
-    "vector-similarity"
+    "vector-similarity",
+    "mcp",
+    "model-context-protocol",
+    "mcp-server",
+    "ai-tools"
   ],
   "author": "Michael Jupp",
   "license": "MIT",
@@ -44,17 +53,23 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",
-    "@types/node": "^20.0.0",
+    "@types/node": "^20.19.13",
+    "dotenv": "^17.2.2",
     "jest": "^29.5.0",
     "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "openai": "^4.67.0"
+    "@modelcontextprotocol/sdk": "^1.17.5",
+    "mcp-framework": "^0.2.15",
+    "openai": "^4.67.0",
+    "zod": "^3.25.76"
   },
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "mcp-config.json"
   ]
 }

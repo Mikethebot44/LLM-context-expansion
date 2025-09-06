@@ -1,0 +1,84 @@
+{
+  "name": "double-context-mcp",
+  "version": "1.0.0",
+  "description": "Intelligent context compression and optimization for AI agents using semantic analysis",
+  "author": "Michael Jupp",
+  "homepage": "https://github.com/Mikethebot44/LLM-context-expansion",
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "context-compression",
+    "llm-optimization",
+    "semantic-analysis",
+    "token-management",
+    "ai-tools",
+    "deduplication",
+    "prioritization"
+  ],
+  "capabilities": [
+    "tools"
+  ],
+  "tools": [
+    {
+      "name": "optimize_prompt",
+      "description": "Optimize context for LLM prompts with semantic deduplication and intelligent prioritization",
+      "category": "optimization"
+    },
+    {
+      "name": "optimize_chat",
+      "description": "Optimize chat conversation history by removing redundant messages while maintaining flow",
+      "category": "optimization"
+    },
+    {
+      "name": "analyze_tokens",
+      "description": "Analyze token usage for text content or conversations with detailed recommendations",
+      "category": "analysis"
+    },
+    {
+      "name": "deduplicate_content",
+      "description": "Remove semantically similar content using AI-powered similarity detection",
+      "category": "content-processing"
+    },
+    {
+      "name": "prioritize_content",
+      "description": "Rank and prioritize content based on semantic relevance to a query",
+      "category": "content-processing"
+    },
+    {
+      "name": "estimate_tokens",
+      "description": "Estimate token counts for various content types with detailed breakdown",
+      "category": "analysis"
+    }
+  ],
+  "requirements": {
+    "openai_api_key": {
+      "required": true,
+      "description": "OpenAI API key for semantic analysis and embeddings",
+      "environment_variable": "OPENAI_API_KEY"
+    }
+  },
+  "transport": {
+    "stdio": {
+      "command": "node",
+      "args": ["dist/mcp/index.js"]
+    }
+  },
+  "configuration": {
+    "semantic_threshold": {
+      "default": 0.9,
+      "description": "Similarity threshold for semantic deduplication (0-1)",
+      "type": "number"
+    },
+    "embedding_model": {
+      "default": "text-embedding-3-small",
+      "description": "OpenAI embedding model to use",
+      "type": "string"
+    },
+    "default_strategy": {
+      "default": "hybrid",
+      "description": "Default prioritization strategy",
+      "type": "string",
+      "enum": ["relevance", "recency", "hybrid"]
+    }
+  }
+}

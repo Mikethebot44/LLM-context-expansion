@@ -281,6 +281,63 @@ const similarity = cosineSimilarity(embedding1, embedding2);
 console.log(`Similarity: ${similarity.toFixed(3)}`); // 0.0 to 1.0
 ```
 
+## MCP Server (Model Context Protocol)
+
+**NEW**: This package now includes an MCP server that exposes all context optimization functionality to any AI agent through the standardized Model Context Protocol.
+
+### Quick Start with MCP
+
+1. **Build the MCP Server**
+```bash
+npm run build:all
+```
+
+2. **Start the MCP Server**
+```bash
+npm run start:mcp
+```
+
+3. **Connect from Claude Desktop, VS Code, Cursor, or any MCP client**
+
+### Available MCP Tools
+
+The MCP server provides these tools for AI agents:
+
+- **`optimize_prompt`** - Optimize context for LLM prompts with semantic deduplication
+- **`optimize_chat`** - Optimize chat conversation history while maintaining flow
+- **`analyze_tokens`** - Analyze token usage with detailed recommendations
+- **`deduplicate_content`** - Remove semantically similar content using AI
+- **`prioritize_content`** - Rank content by relevance to a query
+- **`estimate_tokens`** - Estimate token counts with detailed breakdown
+
+### MCP Configuration
+
+Add to your MCP client configuration:
+
+```json
+{
+  "mcpServers": {
+    "double-context": {
+      "command": "node",
+      "args": ["path/to/double-context/dist/mcp/index.js"],
+      "env": {
+        "OPENAI_API_KEY": "your-api-key-here"
+      }
+    }
+  }
+}
+```
+
+### Example MCP Usage
+
+Once connected, AI agents can call tools directly:
+
+```
+I have a large conversation that's exceeding my context window. Can you optimize it for me?
+
+Agent: I'll use the optimize_chat tool to compress your conversation while maintaining important context...
+```
+
 ## How It Works
 
 The optimization pipeline follows these steps:

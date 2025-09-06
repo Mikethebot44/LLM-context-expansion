@@ -1,0 +1,218 @@
+#!/usr/bin/env node
+
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { ListToolsRequestSchema, CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+
+import { optimizePrompt } from '../src/optimizer.js';
+import { optimizeChatHistory } from '../src/chatOptimizer.js';
+import { countTokens } from '../src/tokenizer.js';
+
+/**
+ * Context Compression MCP Server
+ * 
+ * Provides intelligent context compression and optimization tools for AI agents.
+ * Uses the official MCP SDK for better compatibility.
+ */
+
+const server = new Server(
+  {
+    name: 'double-context-mcp',
+    version: '1.0.0',
+  },
+  {
+    capabilities: {
+      tools: {},
+    },
+  }
+);
+
+// Register the optimize_prompt tool
+server.setRequestHandler(ListToolsRequestSchema, async () => {
+  return {
+    tools: [
+      {
+        name: 'optimize_prompt',
+        description: 'Optimize context for LLM prompts using semantic deduplication and prioritization',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            content: { 
+              type: 'string', 
+              description: 'The content to optimize' 
+            },
+            query: { 
+              type: 'string', 
+              description: 'Query to guide prioritization' 
+            },
+            maxTokens: { 
+              type: 'number', 
+              description: 'Maximum tokens in output',
+              default: 4000
+            },
+            openaiApiKey: { 
+              type: 'string', 
+              description: 'OpenAI API key for embeddings' 
+            }
+          },
+          required: ['content', 'openaiApiKey']
+        }
+      },
+      {
+        name: 'optimize_chat',
+        description: 'Optimize chat conversation history while preserving flow',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            messages: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  role: { type: 'string' },
+                  content: { type: 'string' }
+                },
+                required: ['role', 'content']
+              },
+              description: 'Chat messages to optimize'
+            },
+            maxTokens: { 
+              type: 'number', 
+              description: 'Maximum tokens in output',
+              default: 4000
+            },
+            openaiApiKey: { 
+              type: 'string', 
+              description: 'OpenAI API key for embeddings' 
+            }
+          },
+          required: ['messages', 'openaiApiKey']
+        }
+      },
+      {
+        name: 'estimate_tokens',
+        description: 'Estimate token count for text content',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            content: { 
+              type: 'string', 
+              description: 'Content to analyze' 
+            }
+          },
+          required: ['content']
+        }
+      }
+    ]
+  };
+});
+
+// Handle tool calls
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  const { name, arguments: args } = request.params;
+
+  if (!args) {
+    return {
+      content: [{ 
+        type: 'text', 
+        text: JSON.stringify({ error: 'Missing arguments' }, null, 2) 
+      }],
+      isError: true
+    };
+  }
+
+  try {
+    switch (name) {
+      case 'optimize_prompt':
+        const content = args.content as string;
+        const query = args.query as string;
+        const maxTokens = (args.maxTokens as number) || 4000;
+        const openaiApiKey = args.openaiApiKey as string;
+        
+        const result = await optimizePrompt({
+          userPrompt: query || 'Optimize this content',
+          context: content.split('\n\n'), // Split into chunks
+          maxTokens,
+          openaiApiKey,
+          dedupe: true,
+          strategy: query ? 'relevance' : 'hybrid'
+        });
+        return {
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+        };
+
+      case 'optimize_chat':
+        const messages = args.messages as { role: string; content: string }[];
+        const chatMaxTokens = (args.maxTokens as number) || 4000;
+        const chatApiKey = args.openaiApiKey as string;
+        
+        const chatResult = await optimizeChatHistory({
+          messages: messages.map(msg => ({
+            role: msg.role as "system" | "user" | "assistant",
+            content: msg.content
+          })),
+          maxTokens: chatMaxTokens,
+          openaiApiKey: chatApiKey,
+          dedupe: true,
+        });
+        return {
+          content: [{ type: 'text', text: JSON.stringify(chatResult, null, 2) }]
+        };
+
+      case 'estimate_tokens':
+        const textContent = args.content as string;
+        const tokens = countTokens(textContent);
+        return {
+          content: [{ 
+            type: 'text', 
+            text: JSON.stringify({ 
+              content: textContent,
+              estimatedTokens: tokens,
+              characterCount: textContent.length 
+            }, null, 2) 
+          }]
+        };
+
+      default:
+        throw new Error(`Unknown tool: ${name}`);
+    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return {
+      content: [{ 
+        type: 'text', 
+        text: JSON.stringify({ 
+          error: errorMessage,
+          tool: name 
+        }, null, 2) 
+      }],
+      isError: true
+    };
+  }
+});
+
+async function main() {
+  const transport = new StdioServerTransport();
+  console.error('🚀 Starting Double-Context MCP Server...');
+  console.error('🔑 Note: All semantic features require an OpenAI API key');
+  console.error('📖 Visit https://github.com/Mikethebot44/LLM-context-expansion for documentation');
+  
+  await server.connect(transport);
+}
+
+// Handle process signals gracefully
+process.on('SIGINT', () => {
+  console.log('\n📪 Shutting down Double-Context MCP Server...');
+  process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+  console.log('\n📪 Shutting down Double-Context MCP Server...');
+  process.exit(0);
+});
+
+// Start the server
+main().catch((error) => {
+  console.error('❌ Server startup failed:', error);
+  process.exit(1);
+});
