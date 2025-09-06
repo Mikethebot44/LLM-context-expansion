@@ -303,12 +303,16 @@ npm run start:mcp
 
 The MCP server provides these tools for AI agents:
 
-- **`optimize_prompt`** - Optimize context for LLM prompts with semantic deduplication
-- **`optimize_chat`** - Optimize chat conversation history while maintaining flow
-- **`analyze_tokens`** - Analyze token usage with detailed recommendations
-- **`deduplicate_content`** - Remove semantically similar content using AI
-- **`prioritize_content`** - Rank content by relevance to a query
-- **`estimate_tokens`** - Estimate token counts with detailed breakdown
+#### Context Optimization Tools
+- **`optimize_prompt`** - Optimize context for LLM prompts with semantic deduplication and prioritization
+- **`optimize_chat`** - Optimize chat conversation history while maintaining conversational flow
+- **`estimate_tokens`** - Estimate token counts with detailed character analysis
+
+#### Advanced File & Command Tools
+- **`ask_about_file`** - Extract specific information from files without loading entire contents into context
+- **`run_and_extract`** - Execute terminal commands and intelligently extract relevant information using AI analysis
+
+All tools use OpenAI's GPT models for intelligent analysis and information extraction.
 
 ### MCP Configuration
 
@@ -319,7 +323,7 @@ Add to your MCP client configuration:
   "mcpServers": {
     "double-context": {
       "command": "node",
-      "args": ["path/to/double-context/dist/mcp/index.js"],
+      "args": ["C:/path/to/double-context/mcp-server.mjs"],
       "env": {
         "OPENAI_API_KEY": "your-api-key-here"
       }
@@ -328,14 +332,28 @@ Add to your MCP client configuration:
 }
 ```
 
+Replace `C:/path/to/double-context/` with the actual path to your installation.
+
 ### Example MCP Usage
 
 Once connected, AI agents can call tools directly:
 
+**File Analysis:**
 ```
-I have a large conversation that's exceeding my context window. Can you optimize it for me?
+"Can you check if my package.json has any security vulnerabilities listed?"
+→ Agent uses ask_about_file to analyze package.json for security issues
+```
 
-Agent: I'll use the optimize_chat tool to compress your conversation while maintaining important context...
+**Command Execution:**
+```  
+"Run npm test and tell me which tests are failing"
+→ Agent uses run_and_extract to execute tests and extract failure information
+```
+
+**Context Optimization:**
+```
+"I have a large conversation that's exceeding my context window. Can you optimize it?"
+→ Agent uses optimize_chat to compress conversation while maintaining context
 ```
 
 ## How It Works

@@ -6,7 +6,8 @@
       "Bash(npm run build:mcp:*)",
       "Bash(npm run start:mcp:*)",
       "Bash(npm install:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ],
     "deny": []
   }
