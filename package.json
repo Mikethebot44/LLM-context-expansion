@@ -6,16 +6,12 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "build:mcp": "tsc -p tsconfig.mcp.json",
-    "build:all": "npm run build && npm run build:mcp",
+    "build:all": "npm run build",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "dev": "tsc --watch",
-    "dev:mcp": "tsc -p tsconfig.mcp.json --watch",
-    "start:mcp": "node mcp-server.mjs",
-    "mcp:dev": "node --loader ts-node/esm mcp/index.ts",
     "clean": "rm -rf dist",
-    "prepublishOnly": "npm run clean && npm run build:all && npm test"
+    "prepublishOnly": "npm run clean && npm run build && npm test"
   },
   "keywords": [
     "llm",
@@ -33,9 +29,6 @@
     "embeddings",
     "semantic-analysis",
     "vector-similarity",
-    "mcp",
-    "model-context-protocol",
-    "mcp-server",
     "ai-tools"
   ],
   "author": "Michael Jupp",
@@ -61,15 +54,11 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.17.5",
-    "mcp-framework": "^0.2.15",
-    "openai": "^4.67.0",
-    "zod": "^3.25.76"
+    "openai": "^4.67.0"
   },
   "files": [
     "dist",
     "README.md",
-    "LICENSE",
-    "mcp-config.json"
+    "LICENSE"
   ]
 }

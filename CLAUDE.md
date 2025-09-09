@@ -8,12 +8,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Build the TypeScript package
 npm run build
 
-# Build the MCP server
-npm run build:mcp
-
-# Build both package and MCP server
-npm run build:all
-
 # Run tests
 npm test
 
@@ -22,15 +16,6 @@ npm run test:coverage
 
 # Development with watch mode
 npm run dev
-
-# MCP server development with watch mode
-npm run dev:mcp
-
-# Start the MCP server (production)
-npm run start:mcp
-
-# Start MCP server in development mode
-npm run mcp:dev
 
 # Clean build artifacts
 npm run clean
@@ -42,10 +27,6 @@ npm run prepublishOnly
 ## Architecture Overview
 
 This is a TypeScript package called "double-context" that optimizes LLM context windows through intelligent semantic analysis. The architecture follows a pipeline pattern with distinct phases:
-
-### Dual Architecture: Package + MCP Server
-
-The repository contains both a standalone npm package and a Model Context Protocol (MCP) server that exposes the same functionality to AI agents.
 
 ### Core Pipeline (src/optimizer.ts)
 The main `optimizePrompt` function orchestrates a three-step pipeline:
@@ -73,7 +54,7 @@ Separate pipeline for conversational AI optimization:
 - Used throughout pipeline for token budget management
 
 **Types System** (src/types.ts)
-- Central type definitions for both prompt and chat optimization
+- Central type definitions for prompt and chat optimization
 - Key interfaces: `OptimizeOptions`, `ChatMessage`, `ChunkMetadata`
 - Strongly typed configuration with required OpenAI API key
 
