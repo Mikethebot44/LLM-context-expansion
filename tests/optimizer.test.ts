@@ -1,4 +1,4 @@
-import { optimizePrompt } from "../src/optimizer";
+import { optimizePrompt } from "../src/optimizer/optimizer";
 import { countTokens } from "../src/tokenizer";
 
 describe("optimizePrompt", () => {

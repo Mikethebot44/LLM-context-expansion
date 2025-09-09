@@ -1,4 +1,4 @@
-import { countTokens } from "./tokenizer";
+import { countTokens } from "../tokenizer";
 
 export async function compress(chunks: string[], maxTokens: number, embedder?: string): Promise<string[]> {
   if (!chunks || chunks.length === 0) return [];

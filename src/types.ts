@@ -73,3 +73,37 @@ export interface MessageMetadata extends ChunkMetadata {
   role: "system" | "user" | "assistant";
   originalIndex: number;
 }
+
+// Memory layer interfaces
+export interface MemoryEvent {
+  id: string;
+  content: string;
+  timestamp: Date;
+  embedding?: number[];
+  metadata?: Record<string, any>;
+}
+
+export interface MemoryStore {
+  addEvent(event: MemoryEvent): Promise<void>;
+  addEvents(events: MemoryEvent[]): Promise<void>;
+  retrieveRelevant(query: string, options?: { limit?: number; minSimilarity?: number }): Promise<MemoryEvent[]>;
+  summarize(events: MemoryEvent[], options?: { maxTokens?: number }): Promise<string>;
+  clear(): Promise<void>;
+}
+
+export interface AgentMemoryOptions {
+  openaiApiKey: string;
+  embeddingModel?: string;
+  maxEvents?: number;
+  deduplicationThreshold?: number;
+  summarizationModel?: string;
+}
+
+export interface GeneratePromptWithMemoryOptions {
+  userPrompt: string;
+  memory: MemoryStore;
+  maxTokens: number;
+  openaiApiKey: string;
+  retrievalLimit?: number;
+  optimizeOptions?: Partial<OptimizeOptions>;
+}

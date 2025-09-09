@@ -1,5 +1,5 @@
-import { ChunkMetadata } from "./types";
-import { EmbeddingProvider, cosineSimilarity } from "./embeddings";
+import { ChunkMetadata } from "../types";
+import { EmbeddingProvider, cosineSimilarity } from "../embeddings";
 
 export async function prioritize(
   chunks: string[], 

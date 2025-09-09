@@ -1,5 +1,5 @@
-import { ChatMessage, MessageMetadata } from "./types";
-import { EmbeddingProvider, cosineSimilarity } from "./embeddings";
+import { ChatMessage, MessageMetadata } from "../types";
+import { EmbeddingProvider, cosineSimilarity } from "../embeddings";
 
 export async function prioritizeChatMessages(
   messages: ChatMessage[], 

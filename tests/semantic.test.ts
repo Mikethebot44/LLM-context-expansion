@@ -1,6 +1,6 @@
-import { optimizePrompt } from "../src/optimizer";
-import { deduplicate } from "../src/dedupe";
-import { prioritize } from "../src/prioritizer";
+import { optimizePrompt } from "../src/optimizer/optimizer";
+import { deduplicate } from "../src/optimizer/dedupe";
+import { prioritize } from "../src/optimizer/prioritizer";
 import { EmbeddingProvider } from "../src/embeddings";
 
 describe("Semantic Analysis (OpenAI Required)", () => {
