@@ -1,4 +1,4 @@
-import { EmbeddingProvider, cosineSimilarity } from './embeddings';
+import { EmbeddingProvider, cosineSimilarity } from '../embeddings';
 
 export async function deduplicate(
   chunks: string[], 

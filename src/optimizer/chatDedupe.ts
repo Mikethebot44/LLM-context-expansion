@@ -1,5 +1,5 @@
-import { EmbeddingProvider, cosineSimilarity } from './embeddings';
-import { ChatMessage } from './types';
+import { EmbeddingProvider, cosineSimilarity } from '../embeddings';
+import { ChatMessage } from '../types';
 
 export async function deduplicateMessages(
   messages: ChatMessage[], 

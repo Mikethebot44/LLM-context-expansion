@@ -1,6 +1,6 @@
-import { optimizeChatHistory, estimateChatTokens, createConversationSummary } from "../src/chatOptimizer";
-import { deduplicateMessages } from "../src/chatDedupe";
-import { prioritizeChatMessages } from "../src/chatPrioritizer";
+import { optimizeChatHistory, estimateChatTokens, createConversationSummary } from "../src/optimizer/chatOptimizer";
+import { deduplicateMessages } from "../src/optimizer/chatDedupe";
+import { prioritizeChatMessages } from "../src/optimizer/chatPrioritizer";
 import { ChatMessage } from "../src/types";
 
 describe("Chat Optimization", () => {

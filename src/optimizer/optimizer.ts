@@ -1,9 +1,9 @@
-import { countTokens } from "./tokenizer";
+import { countTokens } from "../tokenizer";
 import { deduplicate } from "./dedupe";
 import { compress } from "./compressor";
 import { prioritize } from "./prioritizer";
-import { OptimizeOptions, OptimizeResult } from "./types";
-import { createEmbeddingProvider } from "./embeddings";
+import { OptimizeOptions, OptimizeResult } from "../types";
+import { createEmbeddingProvider } from "../embeddings";
 
 export async function optimizePrompt(opts: OptimizeOptions): Promise<OptimizeResult> {
   if (!opts.userPrompt) {

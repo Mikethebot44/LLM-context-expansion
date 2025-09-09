@@ -1,6 +1,6 @@
-import { countTokens } from "./tokenizer";
-import { createEmbeddingProvider } from "./embeddings";
-import { ChatMessage, ChatOptimizeOptions, ChatOptimizeResult, MessageMetadata } from "./types";
+import { countTokens } from "../tokenizer";
+import { createEmbeddingProvider } from "../embeddings";
+import { ChatMessage, ChatOptimizeOptions, ChatOptimizeResult, MessageMetadata } from "../types";
 import { deduplicateMessages } from "./chatDedupe";
 import { prioritizeChatMessages } from "./chatPrioritizer";
 
